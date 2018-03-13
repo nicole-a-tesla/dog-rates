@@ -38,18 +38,22 @@ export default (state=initialState, action) => {
         }
         return dog
       })
+
     case DOG_REQUEST_MADE:
       return [...state, action.payload]
+
     case ADD_DOG:
       return state.map((dog) => {
-        if (dog.id === action.payload.id) {
+        if (dog.id === action.payload.temporaryId) {
           return action.payload
         } else {
           return dog
         }
       })
+
     case DELETE_DOG:
       return state.filter((dog) => dog.id !== action.payload)
+
     default:
       return state
   }
@@ -101,8 +105,9 @@ export const addDog = () => {
   return (dispatch, getState) => {
     const state = getState().dogRate
     const lastDog = state[state.length - 1] 
+    const uid = generate_uid()
     const placeholderDog = {
-      id: lastDog.id+1, 
+      id: uid, 
       loading: true,
     }
 
@@ -111,10 +116,15 @@ export const addDog = () => {
       payload: placeholderDog
     })
 
-    fetchDoggo().then((dogImg) => {
+    fetchDoggo().then((dog) => {
       dispatch({
         type: ADD_DOG,
-        payload: {...placeholderDog, imgSrc: dogImg, currentScore: 12}
+        payload: {
+          id: dog.id,
+          temporaryId: uid,
+          imgSrc: dog.imageSource,
+          currentScore: 12
+        }
       })
     })
   }
@@ -133,6 +143,15 @@ const fetchDoggo = () => {
   return fetch('http://localhost:3001/pupper')
     .then((r)=>r.json())
     .then((response) => {
-      return response.message
+      return response
     })
+}
+
+const generate_uid = () => {
+  const s4 = () => {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
