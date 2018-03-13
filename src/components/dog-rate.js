@@ -22,6 +22,9 @@ const style = {
   },
   span:{
     alignSelf: 'center'
+  },
+  deleteButton: {
+    gridColumn: '1 / span 3'
   }
 }
 
@@ -29,11 +32,12 @@ export default (props) => {
   return(
     <div style={style.container} className='dog-rate'>
       <img style={style.image} src={ props.imgSrc } />
-        <button onClick={ props.onPlus }>+</button>
+        <button onClick={ props.onMinus }>-</button>
         <span style={style.span} className='score'>
           { props.currentScore }
         </span>
-        <button onClick={ props.onMinus }>-</button>
+        <button onClick={ props.onPlus }>+</button>
+        <button style={style.deleteButton} onClick={ props.onDelete }> 🚫 </button>
     </div>
   )
 }
