@@ -9,12 +9,12 @@ const Dog = bookshelf.Model.extend({
   }
 });
 
-const findOrCreateDog = (imageUrl) => {
-  return Dog.where('imageSource', imageUrl).fetch()
+const findOrCreateDog = (imageSource) => {
+  return Dog.where('imageSource', imageSource).fetch()
     .then((matchingDogs) => {
       if (matchingDogs === null) {
         const newDog = new Dog({
-          imageSource: imageUrl 
+          imageSource: imageSource 
         })
         return newDog.save()
           .then((saved) => {

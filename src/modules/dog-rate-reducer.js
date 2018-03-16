@@ -5,24 +5,16 @@ export const DECREMENT_SCORE = 'dogRate/DECREMENT_SCORE'
 export const ADD_DOG = 'dogRate/ADD_DOG'
 export const DELETE_DOG = 'dogRate/DELETE_DOG'
 export const DOG_REQUEST_MADE = 'dogRate/DOG_REQUEST_MADE'
+export const INITIAL_DOG_LOAD = 'dogRate/INITIAL_DOG_LOAD'
 
-const initialState = [
-  {
-    id: 1,
-    currentScore: 12,
-    loading: false,
-    imgSrc: 'http://a57.foxnews.com/images.foxnews.com/content/fox-news/lifestyle/2018/03/08/corgi-got-fat-shamed-and-internet-could-not-handle-it/_jcr_content/par/featured_image/media-0.img.jpg/1470/828/1520540975471.jpg?ve=1&tl=1'
-  },
-  {
-    id: 2,
-    currentScore: 12,
-    loading: false,
-    imgSrc: 'https://vetstreet.brightspotcdn.com/dims4/default/8608a7b/2147483647/thumbnail/645x380/quality/90/?url=https%3A%2F%2Fvetstreet-brightspot.s3.amazonaws.com%2Ff6%2F95%2Fb91443a6470cab45132fb2e90114%2FAP-NM4WCH-ph645080113.jpg'
-  }
-]
+const initialState = []
 
 export default (state=initialState, action) => {
   switch(action.type) {
+
+    case INITIAL_DOG_LOAD:
+      return action.payload
+
     case INCREMENT_SCORE:
       return state.map((dog) => {
           if(dog.id === action.payload){ 
@@ -59,15 +51,16 @@ export default (state=initialState, action) => {
   }
 }
 
-const getVowel = () => {
-  let vowelCount = Math.floor(Math.random()*4) + 1
-  let vowels = ''
-  
-  for (let i = 1; i < vowelCount; i++) {
-    vowels += ['a','e','i','o','u','y'][Math.floor(Math.random()*6)]
-  }
 
-  return vowels
+export const loadDogs = () => {
+  return (dispatch) => {
+    fetchDoggos().then((dogs) => {
+      dispatch({
+        type: INITIAL_DOG_LOAD,
+        payload: dogs
+      })
+    })
+  }
 }
 
 export const decrementScore = (id) => {
@@ -85,6 +78,18 @@ export const decrementScore = (id) => {
     }
   }
 }
+
+const getVowel = () => {
+  let vowelCount = Math.floor(Math.random()*4) + 1
+  let vowels = ''
+  
+  for (let i = 1; i < vowelCount; i++) {
+    vowels += ['a','e','i','o','u','y'][Math.floor(Math.random()*6)]
+  }
+
+  return vowels
+}
+
 
 export const incrementScore = (id) => {
   return (dispatch, getState) => {
@@ -116,13 +121,13 @@ export const addDog = () => {
       payload: placeholderDog
     })
 
-    fetchDoggo().then((dog) => {
+    fetchNewDoggo().then((dog) => {
       dispatch({
         type: ADD_DOG,
         payload: {
           id: dog.id,
           temporaryId: uid,
-          imgSrc: dog.imageSource,
+          imageSource: dog.imageSource,
           currentScore: 12
         }
       })
@@ -139,8 +144,16 @@ export const deleteDog = (id) => {
   }
 }
 
-const fetchDoggo = () => {
+const fetchDoggos = () => {
   return fetch('http://localhost:3001/dogs')
+    .then((r)=>r.json())
+    .then((response) => {
+      return response
+    })
+}
+
+const fetchNewDoggo = () => {
+  return fetch('http://localhost:3001/dogs/new')
     .then((r)=>r.json())
     .then((response) => {
       return response

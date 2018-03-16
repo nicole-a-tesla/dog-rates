@@ -31,7 +31,7 @@ const style = {
 export default (props) => {
   return(
     <div style={style.container} className='dog-rate'>
-      <img style={style.image} src={ props.imgSrc } />
+      <img style={style.image} src={ props.imageSource } />
         <button onClick={ props.onMinus }>-</button>
         <span style={style.span} className='score'>
           { props.currentScore }

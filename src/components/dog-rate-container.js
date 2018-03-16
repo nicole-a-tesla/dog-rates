@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { decrementScore, incrementScore, addDog, deleteDog } from '../modules/dog-rate-reducer'
+import { loadDogs, decrementScore, incrementScore, addDog, deleteDog } from '../modules/dog-rate-reducer'
 import DogRate from './dog-rate'
 
 const style = {
@@ -14,15 +14,19 @@ const style = {
 }
 
 class DogRateContainer extends React.Component {
+  componentWillMount() {
+    this.props.loadDogs()
+  }
+
   renderDog(dog) {
-    const currentImage = dog.imgSrc ? dog.imgSrc : 'https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'
+    const currentImage = dog.imageSource ? dog.imageSource : 'https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'
     return(
       <DogRate 
         onPlus={ () =>  this.props.incrementScore(dog.id) }
         onMinus={ () => this.props.decrementScore(dog.id) }
         onDelete={ () => this.props.deleteDog(dog.id) }
         currentScore={ dog.currentScore } 
-        imgSrc={ currentImage } />
+        imageSource={ currentImage } />
     )
   }
     
@@ -43,6 +47,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
   incrementScore,
   decrementScore,
+  loadDogs,
   addDog,
   deleteDog
 }, dispatch)

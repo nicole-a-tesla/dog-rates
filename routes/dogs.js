@@ -5,6 +5,12 @@ const express  = require('express')
 const router = express.Router()
 
 router.get('/', (req,res) => {
+  Dog.fetchAll()
+    .then((allDogs) => res.json(allDogs))
+})
+
+
+router.get('/new', (req,res) => {
   fetch('https://dog.ceo/api/breeds/image/random')
     .then((response)=> response.json())
     .then((responseJson) => { 
