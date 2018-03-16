@@ -140,7 +140,7 @@ export const deleteDog = (id) => {
 }
 
 const fetchDoggo = () => {
-  return fetch('http://localhost:3001/pupper')
+  return fetch('http://localhost:3001/dogs')
     .then((r)=>r.json())
     .then((response) => {
       return response
