@@ -1,8 +1,11 @@
 const Rating = require('../models').Rating
-const findOrCreateDog = require('../models').findOrCreateDog
+const updateOrCreateRating = require('../models').updateOrCreateRating
 const express  = require('express')
 const router = express.Router()
 
-// router.get('/dog_id', (req,res) => {
+router.post('/', (req,res) => {
+  updateOrCreateRating(res.body.dogId, res.body.userId, res.body.score)
+    .then((rating) => { res.json(rating) })
+})
 
-// }
+module.exports = router

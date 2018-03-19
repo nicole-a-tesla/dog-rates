@@ -1,11 +1,13 @@
 const Dog = require('../models').Dog
+const Rating = require('../models').Rating
 const fetch = require('node-fetch')
 const findOrCreateDog = require('../models').findOrCreateDog
 const express  = require('express')
 const router = express.Router()
 
+
 router.get('/', (req,res) => {
-  Dog.fetchAll()
+  Dog.fetchAll({withRelated: ['ratings']})
     .then((allDogs) => res.json(allDogs))
 })
 

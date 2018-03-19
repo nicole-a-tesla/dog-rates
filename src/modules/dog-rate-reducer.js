@@ -6,6 +6,7 @@ export const ADD_DOG = 'dogRate/ADD_DOG'
 export const DELETE_DOG = 'dogRate/DELETE_DOG'
 export const DOG_REQUEST_MADE = 'dogRate/DOG_REQUEST_MADE'
 export const INITIAL_DOG_LOAD = 'dogRate/INITIAL_DOG_LOAD'
+export const SET_SCORE = 'dogRate/SET_SCORE'
 
 const initialState = []
 
@@ -18,10 +19,18 @@ export default (state=initialState, action) => {
     case INCREMENT_SCORE:
       return state.map((dog) => {
           if(dog.id === action.payload){ 
-            dog.currentScore ++
+            dog.currentScore
           }
           return dog
         })
+
+    case SET_SCORE:
+      return state.map((dog) => {
+        if (dog.id === action.payload.id) {
+          dog.currentScore = action.payload.score
+        }
+        return dog
+      })
       
     case DECREMENT_SCORE:
       return state.map((dog) => {
@@ -55,6 +64,7 @@ export default (state=initialState, action) => {
 export const loadDogs = () => {
   return (dispatch) => {
     fetchDoggos().then((dogs) => {
+      dogs = dogs.map((d) => {return { ...d, currentScore: d.ratings[0] ? d.ratings[0].score : 12}})
       dispatch({
         type: INITIAL_DOG_LOAD,
         payload: dogs
@@ -66,15 +76,33 @@ export const loadDogs = () => {
 export const decrementScore = (id) => {
   return (dispatch, getState) => {
     const state = getState().dogRate;
+    const dog = state.filter((dog)=>dog.id===id)[0]
 
     if (state.filter((dog)=>dog.id===id)[0].currentScore <= 10){
       dispatch(setMessage("They're good dogs, Br" + getVowel() + "nt"))
     }
-    else{
-      dispatch({
-        type: DECREMENT_SCORE,
-        payload: id
+    else {
+      let body = {
+        userId: 1,
+        dogId: id,
+        score: dog.currentScore - 1
+      }
+
+      fetch('http://localhost:3001/ratings', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'content-type': 'application/json'
+        }
       })
+        .then((response) => response.json())
+          .then((resJson) => {
+            dispatch({
+              type: SET_SCORE,
+              payload: {id: id, score: resJson.score}
+            })
+          })
+        .catch((e) => console.log(e))
     }
   }
 }
@@ -94,15 +122,33 @@ const getVowel = () => {
 export const incrementScore = (id) => {
   return (dispatch, getState) => {
     const state = getState().dogRate
+    const dog = state.filter((dog)=>dog.id===id)[0]
 
-    if (state.filter((dog)=>dog.id===id)[0].currentScore === 10) {
+    if (dog.currentScore === 10) {
       dispatch(dismissError())
     }
 
-    dispatch({
-      type: INCREMENT_SCORE,
-      payload: id
+    let body = {
+      userId: 1,
+      dogId: id,
+      score: dog.currentScore + 1
+    }
+
+    fetch('http://localhost:3001/ratings', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'content-type': 'application/json'
+      }
     })
+      .then((response) => response.json())
+        .then((resJson) => {
+          dispatch({
+            type: SET_SCORE,
+            payload: {id: id, score: resJson.score}
+          })
+        })
+      .catch((e) => console.log(e))
   }
 }
 
