@@ -16,14 +16,6 @@ export default (state=initialState, action) => {
     case INITIAL_DOG_LOAD:
       return action.payload
 
-    case INCREMENT_SCORE:
-      return state.map((dog) => {
-          if(dog.id === action.payload){ 
-            dog.currentScore
-          }
-          return dog
-        })
-
     case SET_SCORE:
       return state.map((dog) => {
         if (dog.id === action.payload.id) {
@@ -32,14 +24,6 @@ export default (state=initialState, action) => {
         return dog
       })
       
-    case DECREMENT_SCORE:
-      return state.map((dog) => {
-        if (dog.id === action.payload) {
-          dog.currentScore--
-        }
-        return dog
-      })
-
     case DOG_REQUEST_MADE:
       return [...state, action.payload]
 
@@ -81,6 +65,7 @@ export const decrementScore = (id) => {
     if (state.filter((dog)=>dog.id===id)[0].currentScore <= 10){
       dispatch(setMessage("They're good dogs, Br" + getVowel() + "nt"))
     }
+
     else {
       let body = {
         userId: 1,
@@ -183,10 +168,14 @@ export const addDog = () => {
 
 export const deleteDog = (id) => {
   return dispatch => {
-    dispatch({
-      type: DELETE_DOG,
-      payload: id
-    })
+    fetch('http://localhost:3001/dogs/' + id, {method: 'DELETE'})
+      .then(() => {
+          dispatch({
+            type: DELETE_DOG,
+            payload: id
+          })
+        })
+      .catch((e) => console.log(e))
   }
 }
 

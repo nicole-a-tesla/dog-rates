@@ -22,5 +22,20 @@ router.get('/new', (req,res) => {
    })
 })
 
+router.delete('/:dogId', (req, res) => {
+  let dogId = req.params.dogId
+
+  Rating.where('dog_id', dogId).fetch()
+    .then((rating) => {
+      if (rating) {
+        rating.destroy()
+      }
+    })
+    .then(() => {
+      Dog.where('id', dogId).destroy()
+        .then((res.status(204).send({})))
+    })
+})
+
 
 module.exports = router

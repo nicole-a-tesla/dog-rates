@@ -15,8 +15,4 @@ app.use(bodyParser.json())
 app.use('/dogs', dogs)
 app.use('/ratings', ratings)
 
-app.get('/top_pupper/', (req, res) => {
-  res.send('1')
-})
-
-app.listen(3001, ()=> console.log('Example app listening on port 3000!'))
+app.listen(3001, ()=> console.log('Example app listening on port 3001!'))

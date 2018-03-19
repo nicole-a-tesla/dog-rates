@@ -4,7 +4,7 @@ const express  = require('express')
 const router = express.Router()
 
 router.post('/', (req,res) => {
-  updateOrCreateRating(res.body.dogId, res.body.userId, res.body.score)
+  updateOrCreateRating(req.body.dogId, req.body.userId, req.body.score)
     .then((rating) => { res.json(rating) })
 })
 
